@@ -23,6 +23,7 @@ public class Bullet : MonoBehaviour
             return;
         }
     }
+    
 
     public void DestroyAndRemoveBullet()
     {

@@ -11,7 +11,12 @@ public class PlayerController : MonoBehaviour
     public GameObject bullet;
     Vector2 anchorPosition;//bunun x ini oyuncunun konumu yapýp oyuncu oraya gelince durmasý saðlanabilir
                            //(anchor deðiþtirme kýsmýnýda kapatarak. Ve ölçekleri ayarlamak gerek).
+    Player player;
 
+    private void Awake()
+    {
+        player = GetComponent<Player>();
+    }
 
     // Update is called once per frame
     void Update()
@@ -19,6 +24,10 @@ public class PlayerController : MonoBehaviour
         //when bulet hit gun, bullet set the bullet object.
         //if (bullet == null) return;
 
+        if (player.isGameStart)
+        {
+            //aþaðýdakiler buraya eklenecek
+        }
         var displacmentX = GetInput_X() * Time.deltaTime;
         if (displacmentX == 0) return;
         displacmentX = SmoothDisplacment(displacmentX);

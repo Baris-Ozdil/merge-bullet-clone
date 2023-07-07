@@ -152,6 +152,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b049b613ffecf8247bd0ec6be2af2af3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bulletLevel: 0
-  nextLevelBullet: {fileID: 0}
+  bulletLevel: 1
+  nextLevelBullet: {fileID: 4849664286626116828, guid: ed8b79d66a9fe354cacd3688080d7ec4, type: 3}
   health: 0

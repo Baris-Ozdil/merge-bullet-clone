@@ -26,9 +26,17 @@ public class SaveSystem : MonoBehaviour
             LoadPlayerData();
     }
 
+    //oyun baþladýðýnda save etsin ve bullet eklendiðinde
     private void OnApplicationQuit()
     {
-        SaveBullet();
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+        if(player!=null)
+        {
+            if(player.GetComponent<Player>().isGameStart == false)
+            {
+                SaveBullet();
+            }
+        }
     }
 
     public static void SavePlayerData(Player player)
