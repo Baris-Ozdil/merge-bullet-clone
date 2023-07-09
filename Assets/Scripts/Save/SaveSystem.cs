@@ -5,6 +5,12 @@ using System.Runtime.Serialization.Formatters.Binary;
 using UnityEngine.SceneManagement;
 using System.IO;
 using System.Runtime.Serialization;
+using Newtonsoft.Json;
+using UnityEngine.UIElements;
+using System.Linq;
+using System;
+using System.Security.Cryptography;
+using System.Text;
 
 public class SaveSystem : MonoBehaviour
 {
@@ -30,11 +36,11 @@ public class SaveSystem : MonoBehaviour
     private void OnApplicationQuit()
     {
         GameObject player = GameObject.FindGameObjectWithTag("Player");
-        if(player!=null)
+        if (player != null)
         {
-            if(player.GetComponent<Player>().isGameStart == false)
+            if (player.GetComponent<Player>().isGameStart == false)
             {
-                SaveBullet();
+                //SaveBullet();
             }
         }
     }
@@ -43,13 +49,13 @@ public class SaveSystem : MonoBehaviour
     {
         BinaryFormatter formeter = new BinaryFormatter();
         string path = Application.persistentDataPath + pData_sub;
-        FileStream stream = new FileStream(path , FileMode.Create);
+        FileStream stream = new FileStream(path, FileMode.Create);
         P_Data playerData = new P_Data(player);
         formeter.Serialize(stream, playerData);
         stream.Close();
     }
 
-    void LoadPlayerData() 
+    void LoadPlayerData()
     {
         BinaryFormatter formeter = new BinaryFormatter();
         string path = Application.persistentDataPath + pData_sub;
@@ -65,34 +71,70 @@ public class SaveSystem : MonoBehaviour
         {
             Debug.LogError("player does not exist. Path:" + path);
         }
-            
+
     }
     void SaveBullet()
     {
-        BinaryFormatter formeter = new BinaryFormatter();
         string path = Application.persistentDataPath + bullet_sub + SceneManager.GetActiveScene().buildIndex;
-        string countPath = Application.persistentDataPath + count_sub + SceneManager.GetActiveScene().buildIndex;
 
-        FileStream countStream = new FileStream( countPath, FileMode.Create);
-        formeter.Serialize(countStream, bullets.Count);
-        countStream.Close();
+        var saveBullets = new List<BulletData>();
 
-        for (int i = 0; i < bullets.Count; i++)
-        {
-            FileStream stream = new FileStream(path + i, FileMode.Create);
-            BulletData data = new BulletData(bullets[i]);
+        foreach (var bullet in bullets)
+            saveBullets.Add(new BulletData(bullet));
 
-            formeter.Serialize(stream, data);
-            stream.Close();
+        var serialized = JsonConvert.SerializeObject(saveBullets, Formatting.Indented);
+        var b64data = Convert.ToBase64String(Encoding.Unicode.GetBytes(serialized));
+        File.WriteAllText(path, b64data);
 
-            Debug.Log("saved this obje" + bullets[i]);
-        }
+        Debug.Log("saved this obje");
     }
 
     void loadBullet()
     {
-        BinaryFormatter formatter = new BinaryFormatter();
         string path = Application.persistentDataPath + bullet_sub + SceneManager.GetActiveScene().buildIndex;
+
+        if (!File.Exists(path))
+            return;
+
+        var fileContent = File.ReadAllText(path);
+
+        if (string.IsNullOrEmpty(fileContent))
+        {
+            File.Delete(path);
+            return;
+        }
+
+
+        var decodedContent = Encoding.Unicode.GetString(Convert.FromBase64String(fileContent));
+        List<BulletData> data;
+
+        try
+        {
+            data = JsonConvert.DeserializeObject<List<BulletData>>(decodedContent);
+        }
+        catch (Exception ex)
+        {
+            File.Move(path, path + DateTime.Now.ToString("ddMMyyyy_HHmmss") + ".bak");
+            throw;
+        }
+
+        if (data is null || data.Count == 0)
+            return;
+
+        foreach (var bulletData in data)
+        {
+            var prefab = bulletPrebas.FirstOrDefault(a => a.bulletLevel == bulletData.bulletLevel);
+
+            if (prefab != null)
+            {
+                Bullet bullet = Instantiate(prefab, new Vector3(bulletData.x, bulletData.y, bulletData.z), Quaternion.identity);
+                bullet.bulletLevel = bulletData.bulletLevel;
+            }
+        }
+
+        /*
+        BinaryFormatter formatter = new BinaryFormatter();
+        
         string countPath = Application.persistentDataPath + count_sub + SceneManager.GetActiveScene().buildIndex;
         int bulletCount = 0;
 
@@ -131,5 +173,6 @@ public class SaveSystem : MonoBehaviour
                 Debug.LogError("bullet does not exist. Path:" + path);
             }
         }
+        */
     }
 }

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class missel : MonoBehaviour
 {
-    public float misselSpeed = 2.0f;
+    public float misselSpeed = 4.0f;
     public float destroyTimer;
 
     private void Awake()

@@ -12,7 +12,7 @@ public class RangeGate : MonoBehaviour
     {
         while (value == 0)
         {
-            value = Random.RandomRange(-100, 100);
+            value = Random.Range(-100, 100);
         }
         if (value < 0)
         {
@@ -32,7 +32,7 @@ public class RangeGate : MonoBehaviour
         {
             Bullet bullet = other.gameObject.GetComponent<Bullet>();
             value += bullet.bulletLevel;
-            bullet.DestroyAndRemoveBullet();
+            Destroy(other.gameObject);
             if (value < 0)
             {
                 GetComponent<Renderer>().material.color = new Color(255, 0, 0, 0.1f);

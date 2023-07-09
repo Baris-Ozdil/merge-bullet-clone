@@ -24,7 +24,11 @@ public class DragAndDrop : MonoBehaviour
 
     private void OnMouseDrag()
     {
-        transform.position = Camera.main.ScreenToWorldPoint(Input.mousePosition - mousePosition);
+        if (GameObject.FindGameObjectWithTag("Starter").GetComponent<GameStarter>().isShouth == false)
+        {
+            transform.position = Camera.main.ScreenToWorldPoint(Input.mousePosition - mousePosition);
+        }
+        
     }
     private void OnMouseUp()
     {

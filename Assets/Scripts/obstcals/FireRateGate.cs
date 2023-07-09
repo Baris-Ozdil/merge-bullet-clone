@@ -12,16 +12,16 @@ public class FireRateGate : MonoBehaviour
     {
         while (value == 0)
         {
-            value = Random.RandomRange(-100, 100);
+            value = Random.Range(-100, 100);
         }
         if (value < 0)
         {
-            GetComponent<Renderer>().material.color = new Color(255, 0, 0, 0.7f);
+            GetComponent<Renderer>().material.color = new Color(255, 0, 0, 0.07f);
             GetComponentInChildren<TextMeshPro>().text = "Fire Rate \n " + value;
         }
         else
         {
-            GetComponent<Renderer>().material.color = new Color(0, 255, 0, 0.7f);
+            GetComponent<Renderer>().material.color = new Color(0, 255, 0, 0.07f);
             GetComponentInChildren<TextMeshPro>().text = "Fire Rate \n " + value;
         }
     }
@@ -32,7 +32,7 @@ public class FireRateGate : MonoBehaviour
         {
             Bullet bullet = other.gameObject.GetComponent<Bullet>();
             value += bullet.bulletLevel;
-            bullet.DestroyAndRemoveBullet();
+            Destroy(other.gameObject);
             if (value < 0)
             {
                 GetComponent<Renderer>().material.color = new Color(255, 0, 0, 0.1f);

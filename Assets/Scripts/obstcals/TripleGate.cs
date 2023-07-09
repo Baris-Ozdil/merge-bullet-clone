@@ -15,7 +15,7 @@ public class TripleGate : MonoBehaviour
     {
         if (other.gameObject.tag == "bullet")
         {
-            other.gameObject.GetComponent<Bullet>().DestroyAndRemoveBullet();
+            Destroy(other.gameObject);
         }
         else if (other.gameObject.tag == "Player")
         {

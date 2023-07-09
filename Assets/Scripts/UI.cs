@@ -18,4 +18,11 @@ public class UI : MonoBehaviour
         gold.text = "gold: " + player.gold;
     }
 
+    public void SetisStart(GameObject obje)
+    {
+        var starter = GameObject.FindGameObjectWithTag("Starter").GetComponent<GameStarter>();
+        starter.isShouth = true;
+        starter.bulletShouthAndFisrstWAllCreate();
+        Destroy(obje);
+    }
 }

@@ -7,8 +7,9 @@ public class PlayerController : MonoBehaviour
 {
     [SerializeField] float maxDisplacement = 1f;
     [SerializeField] float maxPositionChange_X = 3f;
-    [SerializeField] float pspeed = 1f;
+    [SerializeField] public float pspeed = 1f;
     public GameObject bullet;
+    public bool isMove = false;
     Vector2 anchorPosition;//bunun x ini oyuncunun konumu yapýp oyuncu oraya gelince durmasý saðlanabilir
                            //(anchor deðiþtirme kýsmýnýda kapatarak. Ve ölçekleri ayarlamak gerek).
     Player player;
@@ -27,13 +28,14 @@ public class PlayerController : MonoBehaviour
         if (player.isGameStart)
         {
             //aþaðýdakiler buraya eklenecek
+            var displacmentX = GetInput_X() * Time.deltaTime;
+            if (displacmentX == 0) return;
+            displacmentX = SmoothDisplacment(displacmentX);
+            var newPosition = newLocalPos(displacmentX);
+            newPosition = LimitedNewPosition(newPosition);
+            transform.position = newPosition;
         }
-        var displacmentX = GetInput_X() * Time.deltaTime;
-        if (displacmentX == 0) return;
-        displacmentX = SmoothDisplacment(displacmentX);
-        var newPosition = newLocalPos(displacmentX);
-        newPosition = LimitedNewPosition(newPosition);
-        transform.position = newPosition;
+        
     }
 
     private float GetInput_X()
@@ -42,13 +44,15 @@ public class PlayerController : MonoBehaviour
         if (Input.GetMouseButtonDown(0))
         {
             anchorPosition = Input.mousePosition;
+            isMove = true;
         }
         else if (Input.GetMouseButton(0)) 
         {
             input_X = Input.mousePosition.x - anchorPosition.x;
             anchorPosition = Input.mousePosition;
             moveFoward();
-        }
+        }else if (Input.GetMouseButtonUp(0))
+            isMove = false;
         return input_X;
     }
 

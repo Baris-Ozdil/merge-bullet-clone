@@ -15,18 +15,23 @@ public class Player : MonoBehaviour
 
     int fireRate = 1;//bunu defult zaman bölerek yapacaz araya sbit bir sayý ekliyip ayarlýcancak
     
-    int range = 1; //buda yukarddaki gibi
-    bool tripleShouth = false;
-    bool bigBullet = false;
-    int health;
+    public int range = 3; //buda yukarddaki gibi
+    //public bool tripleShouth = false;
+    //public bool bigBullet = false;
+    public int health = 3;
     bool sheild = false;
 
+    public List<GameObject> guns;
     public void  SetFireTime (int value)
     {
         fireRate = value;
         fireTime = fireTime - (firaRateConstant * fireRate);
+        foreach (GameObject gun in guns) 
+        {
+            gun.GetComponent<Fire>().setFireTime(fireRate);
+        }
         //setlicek
-        List<GameObject> guns = new List<GameObject>();
+        //List<GameObject> guns = new List<GameObject>();
         //misselspawnerý almadýðýmdan, i birden baþlýyor.
         //for (int i = 1; i < guns.Count; i++) 
         //{
@@ -37,25 +42,35 @@ public class Player : MonoBehaviour
 
     public void SetRange(int value)
     {
-
+        range += value / 500;
     }
 
     public void SetSize(bool isBig)
     {
-
+        foreach (GameObject gun in guns)
+        {
+            gun.GetComponent<Fire>().size = isBig; ;
+        }
     }
     public void SetTriple(bool isTriple)
     {
-
+        foreach (GameObject gun in guns)
+        {
+            gun.GetComponent<Fire>().triple = isTriple;
+        }
     }
 
     private void Awake()
     {
+        guns = new List<GameObject>();
         sheild = false;
         SaveSystem.SavePlayerData(this);
         UI.player = this;
-        int i = 0;
-        //GameObject obje = gameObject.transform.FindChild(i.ToString()).gameObject;
+    }
+
+    public void getChild(GameObject obje)
+    {
+        obje.transform.SetParent(gameObject.transform);
     }
 
     //buna ekleme yapýlacak
@@ -77,13 +92,15 @@ public class Player : MonoBehaviour
 
     public void KillPlayer()
     {
+        Time.timeScale = 0;
         StartCoroutine(DeadTimer());
     }
 
     IEnumerator DeadTimer()
     {
-        yield return new WaitForSeconds(1);
         Destroy(gameObject);
+        yield return new WaitForSeconds(0.5f);
+        //change scene
     }
     public void TakeSheild()
     {
