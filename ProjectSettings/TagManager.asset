@@ -7,6 +7,9 @@ TagManager:
   - bullet
   - rocket
   - Starter
+  - anchor
+  - UI
+  - gun
   layers:
   - Default
   - TransparentFX

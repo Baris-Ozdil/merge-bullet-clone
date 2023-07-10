@@ -16,12 +16,12 @@ public class RangeGate : MonoBehaviour
         }
         if (value < 0)
         {
-            GetComponent<Renderer>().material.color = new Color(255, 0, 0, 0.7f);
+            GetComponent<Renderer>().material.color = new Color(255, 0, 0, 0.15f);
             GetComponentInChildren<TextMeshPro>().text = "Range \n " + value;
         }
         else
         {
-            GetComponent<Renderer>().material.color = new Color(0, 255, 0, 0.7f);
+            GetComponent<Renderer>().material.color = new Color(0, 255, 0, 0.15f);
             GetComponentInChildren<TextMeshPro>().text = "Range\n " + value;
         }
     }
@@ -31,21 +31,21 @@ public class RangeGate : MonoBehaviour
         if (other.gameObject.tag == "bullet")
         {
             Bullet bullet = other.gameObject.GetComponent<Bullet>();
-            value += bullet.bulletLevel;
+            value += bullet.damage;
             Destroy(other.gameObject);
             if (value < 0)
             {
-                GetComponent<Renderer>().material.color = new Color(255, 0, 0, 0.1f);
+                GetComponent<Renderer>().material.color = new Color(255, 0, 0, 0.15f);
                 GetComponentInChildren<TextMeshPro>().text = "Range \n " + value;
             }
             else if (value > 0)
             {
-                GetComponent<Renderer>().material.color = new Color(0, 255, 0, 0.1f);
+                GetComponent<Renderer>().material.color = new Color(0, 255, 0, 0.15f);
                 GetComponentInChildren<TextMeshPro>().text = "Range \n " + value;
             }
             else
             {
-                GetComponent<Renderer>().material.color = new Color(0, 0, 255, 0.1f);
+                GetComponent<Renderer>().material.color = new Color(0, 0, 255, 0.15f);
                 GetComponentInChildren<TextMeshPro>().text = "Range \n " + value;
             }
         }

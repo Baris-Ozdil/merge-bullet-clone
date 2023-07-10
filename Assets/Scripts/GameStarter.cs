@@ -5,17 +5,24 @@ using UnityEngine;
 
 public class GameStarter : MonoBehaviour
 {
+    public GameObject endGameObje;
+    public GameObject sheild;
+
     GameObject playerPref;
     public bool isShouth = false;// silah ateþlendiðinde true yap
     public float wallCreateZ;
 
     public List<GameObject> bulletAnchor;
     public List<GameObject> walls;
+    public List<GameObject> gates;
     List<List<GameObject>> columsWithWall;
 
     Player player;
 
-    public float firstWallsEndPoitn;
+    public float firstWallsEndPoint;
+    public float gatesEndPoint;
+    public bool playerChange = false;
+    bool doesSheild = false;
 
     // Start is called before the first frame update
     void Start()
@@ -27,11 +34,112 @@ public class GameStarter : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(isShouth == true && GameObject.FindGameObjectWithTag("bullet") == null)
+        if (playerChange)
+            return;
+        var bul = GameObject.FindGameObjectWithTag("bullet");
+        if (isShouth == true && bul == null)
         {
+            playerChange = true;
+            StartCoroutine(Wait(1));
             player.isGameStart = true;
+            var fireActiver = playerPref.GetComponentsInChildren<Fire>().Select(a => a.gameObject);
+            foreach (var fire in fireActiver) 
+            {
+                fire.GetComponent<Fire>().canFire = true;
+            }
+            
         }
 
+    }
+
+    public void GatesAndEndGameSpawner()
+    {
+        var gatesNumber = Random.Range(3, 6);
+        gatesEndPoint = firstWallsEndPoint;
+        gatesEndPoint += 18;
+
+        var gatesStartPoint = gatesEndPoint;
+        
+
+        //gate spawner
+        for (int i = 0; i < gatesNumber; i++)
+        {
+            
+            int isLeft = Random.Range(0, 2);
+
+            if (doesSheild)
+            {
+                var gateChose = Random.Range(0, 4);
+                if (isLeft == 0)
+                {
+                    Instantiate(gates[gateChose], new Vector3(-3, 1.5f, gatesEndPoint), Quaternion.identity);
+                    gatesEndPoint += 6;
+                }
+                else
+                {
+                    Instantiate(gates[gateChose], new Vector3(3, 1.5f, gatesEndPoint), Quaternion.identity);
+                    gatesEndPoint += 6;
+                }
+            }else if(gatesNumber == i + 1 && !doesSheild)
+            {
+                if (isLeft == 0)
+                {
+                    Instantiate(sheild, new Vector3(-3, 1.5f, gatesEndPoint), Quaternion.identity);
+                    gatesEndPoint += 6;
+                }
+                else
+                {
+                    Instantiate(sheild, new Vector3(3, 1.5f, gatesEndPoint), Quaternion.identity);
+                    gatesEndPoint += 6;
+                }
+                doesSheild = true;
+            }
+            else
+            {
+                int chose = Random.Range(0, 2);
+                if (chose == 0)
+                {
+                    var gateChose = Random.Range(0, 4);
+
+                    if (isLeft == 0)
+                    {
+                        Instantiate(gates[gateChose], new Vector3(-3, 1.5f, gatesEndPoint), Quaternion.identity);
+                        gatesEndPoint += 6;
+                    }
+                    else
+                    {
+                        Instantiate(gates[gateChose], new Vector3(3, 1.5f, gatesEndPoint), Quaternion.identity);
+                        gatesEndPoint += 6;
+                    }
+
+
+                }
+                else
+                {
+                    if (isLeft == 0)
+                    {
+                        Instantiate(sheild, new Vector3(-3, 1.5f, gatesEndPoint), Quaternion.identity);
+                        gatesEndPoint += 6;
+                    }
+                    else
+                    {
+                        Instantiate(sheild, new Vector3(3, 1.5f, gatesEndPoint), Quaternion.identity);
+                        gatesEndPoint += 6;
+                    }
+                    doesSheild = true;
+                }
+            }  
+        }
+        gatesEndPoint += 10;
+
+        //end game object spawner
+        Instantiate(endGameObje, new Vector3(0, 1, gatesEndPoint), Quaternion.identity);
+
+    }
+
+    IEnumerator Wait(float time)
+    {
+        yield return new WaitForSeconds(time);
     }
 
     //bulletlarý save et
@@ -101,7 +209,7 @@ public class GameStarter : MonoBehaviour
 
             if (ispass)
             {
-                
+
                 int maxLevelDecreaser = maxLevel;
 
                 for (int k = 0; k < wallCount; k++)
@@ -135,7 +243,7 @@ public class GameStarter : MonoBehaviour
             {
                 var safety = true;
                 int min = 0;
-                var tempMaxLevel = maxLevel;
+                var tempMaxLevel = walls.Count - 1;
                 for (int k = 0; k < wallCount; k++)
                 {
                     while (safety)
@@ -143,33 +251,22 @@ public class GameStarter : MonoBehaviour
                         var wallId = Random.Range(min, tempMaxLevel);
                         Debug.Log(wallId.ToString());
 
-                        var wall = walls[wallId];
+                        GameObject wall;
+
+                        wall = walls[wallId];
+
 
                         int wallDamage = wall.GetComponent<wall>().wallLevel;
 
-                        if (columnHealth[i] - wallDamage <= (wallCount - k - 1) * walls[wallCount - 1].GetComponent<wall>().wallLevel)
+                        if (columnHealth[i] - wallDamage <= (wallCount - k - 1) * (min + 1))
                         {
+                            columnHealth[i] -= wallDamage;
                             columsWithWall[i].Add(wall);
                             break;
                         }
-                        else
-                        {
-                            if (min + 1 == tempMaxLevel)
-                            {
-                                min++;
-                                tempMaxLevel++;
-                            }
-                            else
-                                min++;
-
-                        }
+                        else if (min < tempMaxLevel)
+                            min++;
                     }
-                    //for (int j = 0; j < wallCount; j++)
-                    //{
-                    //    var wallId = Random.Range(0, maxLevel);
-
-                    //    columsWithWall[i].Add(walls[wallId]);
-                    //}
                 }
             }
         }
@@ -186,11 +283,13 @@ public class GameStarter : MonoBehaviour
                 Instantiate(columsWithWall[i][j], new Vector3(pos.x, pos.y, zPos), Quaternion.identity);
                 zPos += columsWithWall[i][j].transform.lossyScale.z;
             }
-            firstWallsEndPoitn = zPos;
+            firstWallsEndPoint = zPos;
         }
 
+
+        player.gameObject.transform.position = new Vector3(0, 1, firstWallsEndPoint + 4);
         // TODO: plane oluþtur duvarlarýn uzunluðuna göre
-        
+
     }
 
 

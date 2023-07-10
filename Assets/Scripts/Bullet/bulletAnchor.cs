@@ -24,7 +24,6 @@ public class bulletAnchor : MonoBehaviour
             var bullet = other.gameObject.GetComponent<Bullet>();
             bullet.row = row;
             bullet.column = column;
-            isEmty = false;
         }  
     }
 
@@ -32,7 +31,18 @@ public class bulletAnchor : MonoBehaviour
     {
         if (other.gameObject.tag == "bullet")
         {
-            isEmty = true;
         }
+    }
+
+
+    public void mergeBulleSave()
+    {
+        StartCoroutine(WaitEndFrame());
+    }
+
+    IEnumerator WaitEndFrame()
+    {
+        yield return new WaitForEndOfFrame();
+        SaveSystem.SaveBullet();
     }
 }

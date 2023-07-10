@@ -1,17 +1,20 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Player : MonoBehaviour
 {
     //object1.transform.parent = object2.transform //object1 is now the child of object2
 
 
-
     public int gold;
     public bool isGameStart = false; // when changing player location this will turn to ture
     public float fireTime = 1;
-    public float firaRateConstant = 0.001f;
+    public float firaRateConstant = 0.005f;
+    public int gunCount = 0;
+    public List<GameObject> anchors;
+    int anchorCount = 0;
 
     int fireRate = 1;//bunu defult zaman bölerek yapacaz araya sbit bir sayý ekliyip ayarlýcancak
     
@@ -21,14 +24,16 @@ public class Player : MonoBehaviour
     public int health = 3;
     bool sheild = false;
 
+    UI UI;
+
     public List<GameObject> guns;
     public void  SetFireTime (int value)
     {
         fireRate = value;
-        fireTime = fireTime - (firaRateConstant * fireRate);
+        fireTime -= (firaRateConstant * fireRate);
         foreach (GameObject gun in guns) 
         {
-            gun.GetComponent<Fire>().setFireTime(fireRate);
+            gun.GetComponent<Fire>().setFireTime(fireTime);
         }
         //setlicek
         //List<GameObject> guns = new List<GameObject>();
@@ -42,7 +47,7 @@ public class Player : MonoBehaviour
 
     public void SetRange(int value)
     {
-        range += value / 500;
+        range += value /10;
     }
 
     public void SetSize(bool isBig)
@@ -64,10 +69,18 @@ public class Player : MonoBehaviour
     {
         guns = new List<GameObject>();
         sheild = false;
-        SaveSystem.SavePlayerData(this);
+        //SaveSystem.SavePlayerData(this);
+        UI = GameObject.FindGameObjectWithTag("UI").GetComponent<UI>();
         UI.player = this;
+        Data.gaindgold = 0;
     }
 
+    public GameObject GetAnchor()
+    {
+        var obje = anchors[anchorCount];
+        anchorCount++;
+        return obje;
+    }
     public void getChild(GameObject obje)
     {
         obje.transform.SetParent(gameObject.transform);
@@ -92,15 +105,17 @@ public class Player : MonoBehaviour
 
     public void KillPlayer()
     {
-        Time.timeScale = 0;
+        
+        SaveSystem.SavePlayerData(this);
         StartCoroutine(DeadTimer());
     }
 
     IEnumerator DeadTimer()
     {
-        Destroy(gameObject);
+
         yield return new WaitForSeconds(0.5f);
-        //change scene
+        SceneManager.LoadScene("EndGame");
+        Destroy(gameObject);
     }
     public void TakeSheild()
     {
@@ -117,8 +132,9 @@ public class Player : MonoBehaviour
     public void GainGold(int goldGain)
     {
         gold += goldGain;
-
-        SaveSystem.SavePlayerData(this);
+        Data.gaindgold += goldGain;
+        Data.gold = gold;
+        UI.GoldReflesh();
     }
 
 
@@ -131,6 +147,7 @@ public class Player : MonoBehaviour
         }
         gold-= goldNeeded;
         SaveSystem.SavePlayerData(this);
+        UI.GoldReflesh();
         return true;
     }
 

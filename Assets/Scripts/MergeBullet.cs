@@ -38,7 +38,7 @@ public class MergeBullet : MonoBehaviour
         }
     }
 
-    public void merge()
+    public void merge(GameObject anchor)
     {
         if( otherBullet == null )
         {
@@ -46,6 +46,7 @@ public class MergeBullet : MonoBehaviour
             return;
         }
         Instantiate(bullet.nextLevelBullet, otherBullet.transform.position, otherBullet.transform.rotation);
+        anchor.GetComponent<bulletAnchor>().mergeBulleSave();
 
         otherBullet.GetComponent<Bullet>().DestroyAndRemoveBullet();
         bullet.DestroyAndRemoveBullet();

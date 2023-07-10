@@ -9,7 +9,7 @@ public class Gold : MonoBehaviour
     {
         if (other.gameObject.tag == "Player")
         {
-            other.gameObject.GetComponent<Player>().gold += gold;
+            other.gameObject.GetComponent<Player>().GainGold(gold);
             Destroy(gameObject);
         }
     }

@@ -59,6 +59,7 @@ public class SaveSystem : MonoBehaviour
     {
         BinaryFormatter formeter = new BinaryFormatter();
         string path = Application.persistentDataPath + pData_sub;
+
         if (File.Exists(path))
         {
             FileStream stream = new FileStream(path, FileMode.Open);
@@ -71,9 +72,9 @@ public class SaveSystem : MonoBehaviour
         {
             Debug.LogError("player does not exist. Path:" + path);
         }
-
     }
-    void SaveBullet()
+
+    public static void SaveBullet()
     {
         string path = Application.persistentDataPath + bullet_sub + SceneManager.GetActiveScene().buildIndex;
 
@@ -128,7 +129,7 @@ public class SaveSystem : MonoBehaviour
             if (prefab != null)
             {
                 Bullet bullet = Instantiate(prefab, new Vector3(bulletData.x, bulletData.y, bulletData.z), Quaternion.identity);
-                bullet.bulletLevel = bulletData.bulletLevel;
+                //bullet.bulletLevel = bulletData.bulletLevel;
             }
         }
 

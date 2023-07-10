@@ -13,12 +13,18 @@ public class Bullet : MonoBehaviour
     public float speed = 4f;
     private GameStarter gameStarter;
     Player player;
+    public int damage;
     private void Start()
     {
+        damage = bulletLevel;
         player = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
         gameStarter = GameObject.FindGameObjectWithTag("Starter").GetComponent<GameStarter>();
         if(!player.isGameStart)
+        {
             SaveSystem.bullets.Add(this);
+            //save();
+        }
+            
 
         GetComponentInChildren<TextMesh>().text = bulletLevel.ToString();
 
@@ -34,12 +40,13 @@ public class Bullet : MonoBehaviour
         }
     }
 
+
     private void FixedUpdate()
     {
          
-        if(gameStarter.isShouth == true)
+        if(gameStarter.isShouth == true && transform.parent == null)
         {
-            transform.position += Vector3.forward * speed * Time.deltaTime;
+            transform.position += transform.forward * speed * Time.deltaTime;
             if (player.isGameStart)
             {
                 StartCoroutine(destroyTimer(player.range));
@@ -61,14 +68,10 @@ public class Bullet : MonoBehaviour
 
     }
 
-    private void DestroyBullet()
-    {
-        Destroy(gameObject);
-    }
     public void takeDamage(int damage)
     {
         health -= damage;
         if(health <= 0)
-            DestroyBullet();
+            DestroyAndRemoveBullet();
     }
 }

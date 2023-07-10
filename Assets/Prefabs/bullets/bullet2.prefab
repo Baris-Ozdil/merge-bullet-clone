@@ -249,8 +249,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bulletLevel: 2
-  nextLevelBullet: {fileID: 0}
+  nextLevelBullet: {fileID: 4849664286626116828, guid: 217fee2f40c3ffd48afa6be36a0fe41c, type: 3}
   health: 6
   column: 0
   row: 0
   speed: 8
+  damage: 0

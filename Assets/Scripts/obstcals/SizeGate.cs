@@ -8,7 +8,7 @@ public class SizeGate : MonoBehaviour
 {
     void Start()
     {
-            GetComponent<Renderer>().material.color = new Color(0, 0, 255, 0.7f);
+            GetComponent<Renderer>().material.color = new Color(0, 0, 255, 0.15f);
             GetComponentInChildren<TextMeshPro>().text = "Size";
     }
 

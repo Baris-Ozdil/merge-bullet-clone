@@ -18,7 +18,7 @@ public class EndGameWall : MonoBehaviour
         if(other.gameObject.tag == "bullet")
         {
             Bullet bullet = other.gameObject.GetComponent<Bullet>();
-            TakeDamage(bullet.bulletLevel);
+            TakeDamage(bullet.damage);
             bullet.DestroyAndRemoveBullet();
         }
         else if(other.gameObject.tag == "Player")

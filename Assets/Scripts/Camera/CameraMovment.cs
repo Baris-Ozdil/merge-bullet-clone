@@ -8,12 +8,15 @@ public class CameraMovment : MonoBehaviour
     private Player player;
     private PlayerController playerController;
 
-    public float rotateSpeed = 3;
+    public float rotateSpeed = 8;
     public float speedWithBullet = 4f;
     private float speedWithPlayer;
+    
+    public float height = 10;
+    public float heightChangeSpee = 2;
 
-        // Start is called before the first frame update
-        void Start()
+    // Start is called before the first frame update
+    void Start()
     {
         gameStarter = GameObject.FindGameObjectWithTag("Starter").GetComponent<GameStarter>();
         player = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
@@ -27,12 +30,17 @@ public class CameraMovment : MonoBehaviour
         if (gameStarter.isShouth == true && player.isGameStart == false)
         {
 
-            if (gameObject.transform.rotation.x < 30)
-                transform.eulerAngles += new Vector3(rotateSpeed * Time.deltaTime, 0, 0); 
-                //gameObject.transform.Rotate(gameObject.transform.rotation.x - 
-                //    , gameObject.transform.rotation.y, gameObject.transform.rotation.z) ;
-            if(transform.position.z< gameStarter.firstWallsEndPoitn)
-            transform.position += Vector3.forward * speedWithBullet * Time.deltaTime;
+            if (transform.rotation.eulerAngles.x > 40)
+                gameObject.transform.Rotate(-rotateSpeed * Time.deltaTime, 0, 0, Space.Self);
+                
+            if(transform.position.y > 16)
+            {
+                transform.position -= new Vector3(0,heightChangeSpee * Time.deltaTime,0) ;
+            }
+
+            var endpoint = gameStarter.firstWallsEndPoint;
+            if (transform.position.z < endpoint - 11)
+                transform.position += Vector3.forward * speedWithBullet * (11 / endpoint) * Time.deltaTime;
         }
         else if (gameStarter.isShouth == true && playerController.isMove == true)
         {

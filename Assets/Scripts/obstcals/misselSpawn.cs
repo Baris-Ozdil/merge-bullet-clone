@@ -7,10 +7,17 @@ public class misselSpawn : MonoBehaviour
     //playerýn önündeki objeye yerleþtirilecek
     public GameObject spawner;
     public GameObject missel;
-
-    private void Start()
+    bool isSpawn = false;
+    private void Update()
     {
-        spawn();
+        if (isSpawn)
+            return;
+        if (gameObject.GetComponent<Player>().isGameStart)
+        {
+
+            isSpawn = true;
+            spawn();
+        }
     }
     public void spawn()
     {
