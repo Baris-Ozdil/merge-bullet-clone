@@ -6,10 +6,12 @@ using UnityEngine;
 public class P_Data 
 {
     public int gold;
+    public int highScore;
 
     public P_Data(Player player)
     {
         gold = player.gold;
+        highScore = player.highScore;
     }
 
 }

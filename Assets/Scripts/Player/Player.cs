@@ -14,6 +14,7 @@ public class Player : MonoBehaviour
     public float firaRateConstant = 0.005f;
     public int gunCount = 0;
     public List<GameObject> anchors;
+    public int highScore = 0;
     int anchorCount = 0;
 
     int fireRate = 1;//bunu defult zaman bölerek yapacaz araya sbit bir sayý ekliyip ayarlýcancak
@@ -94,7 +95,6 @@ public class Player : MonoBehaviour
             health -= 1;
             if(health <= 0)
             {
-                // oyuncu ölünce save siliniyormu bak
                 KillPlayer();
             }
 
@@ -105,7 +105,9 @@ public class Player : MonoBehaviour
 
     public void KillPlayer()
     {
-        
+        if(highScore<transform.position.z * 100)
+            highScore = (int)transform.position.z * 100;
+        Data.highscore = highScore;
         SaveSystem.SavePlayerData(this);
         StartCoroutine(DeadTimer());
     }

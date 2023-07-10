@@ -67,6 +67,7 @@ public class SaveSystem : MonoBehaviour
             stream.Close();
             Player player = Instantiate(playerPref, new Vector3(-100, 200, -100), Quaternion.identity);
             player.gold = playerData.gold;
+            player.highScore = playerData.highScore;
         }
         else
         {
