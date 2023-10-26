@@ -13,11 +13,11 @@ public class TripleGate : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.tag == "bullet")
-        {
-            Destroy(other.gameObject);
-        }
-        else if (other.gameObject.tag == "Player")
+        //if (other.gameObject.tag == "bullet")
+        //{
+        //    Destroy(other.gameObject);
+        //}
+        /*else*/ if (other.gameObject.tag == "Player")
         {
             other.GetComponent<Player>().SetTriple(true);
             Destroy(gameObject);

@@ -15,7 +15,7 @@ using System.Text;
 public class SaveSystem : MonoBehaviour
 {
     public static List<Bullet> bullets = new List<Bullet>();
-    public List<Bullet> bulletPrebas = new List<Bullet>();
+    public List<GameObject> bulletPrebas = new List<GameObject>();
     public Player playerPref;
 
     const string bullet_sub = "/bullet";
@@ -24,12 +24,12 @@ public class SaveSystem : MonoBehaviour
 
     private void Awake()
     {
-        loadBullet();
         string path = Application.persistentDataPath + pData_sub;
         if (!File.Exists(path))
             Instantiate(playerPref, new Vector3(-100, 200, -100), Quaternion.identity);
         else
             LoadPlayerData();
+        loadBullet();
     }
 
     //oyun baþladýðýnda save etsin ve bullet eklendiðinde
@@ -44,7 +44,6 @@ public class SaveSystem : MonoBehaviour
             }
         }
     }
-
     public static void SavePlayerData(Player player)
     {
         BinaryFormatter formeter = new BinaryFormatter();
@@ -68,6 +67,8 @@ public class SaveSystem : MonoBehaviour
             Player player = Instantiate(playerPref, new Vector3(-100, 200, -100), Quaternion.identity);
             player.gold = playerData.gold;
             player.highScore = playerData.highScore;
+            player.buyedBullet = playerData.buyedBullet;
+            player.buyed100Bullet = playerData.buyed100Bullet;
         }
         else
         {
@@ -81,14 +82,21 @@ public class SaveSystem : MonoBehaviour
 
         var saveBullets = new List<BulletData>();
 
+        String savedBulletsString = "saved Bullets:";
         foreach (var bullet in bullets)
+        {
             saveBullets.Add(new BulletData(bullet));
+            savedBulletsString +="\n " + bullet.name ;
+        }
+            
 
         var serialized = JsonConvert.SerializeObject(saveBullets, Formatting.Indented);
         var b64data = Convert.ToBase64String(Encoding.Unicode.GetBytes(serialized));
         File.WriteAllText(path, b64data);
 
-        Debug.Log("saved this obje");
+        
+        
+        Debug.Log("saved this obje " +savedBulletsString);
     }
 
     void loadBullet()
@@ -125,11 +133,11 @@ public class SaveSystem : MonoBehaviour
 
         foreach (var bulletData in data)
         {
-            var prefab = bulletPrebas.FirstOrDefault(a => a.bulletLevel == bulletData.bulletLevel);
+            var prefab = bulletPrebas.FirstOrDefault(a => a.GetComponent<Bullet>().bulletLevel == bulletData.bulletLevel);
 
             if (prefab != null)
             {
-                Bullet bullet = Instantiate(prefab, new Vector3(bulletData.x, bulletData.y, bulletData.z), Quaternion.identity);
+                /*Bullet bullet =*/ Instantiate(prefab, new Vector3(bulletData.x, bulletData.y, bulletData.z), Quaternion.identity);
                 //bullet.bulletLevel = bulletData.bulletLevel;
             }
         }
@@ -177,4 +185,6 @@ public class SaveSystem : MonoBehaviour
         }
         */
     }
+
+    
 }

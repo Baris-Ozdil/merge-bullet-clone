@@ -274,7 +274,7 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 3, y: 1, z: 1}
+  m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &6181845032768626375
 MonoBehaviour:
@@ -316,6 +316,7 @@ MonoBehaviour:
   - {fileID: 8530663211818971512}
   - {fileID: 1475905177740675605}
   - {fileID: 955903567489113161}
+  highScore: 0
   range: 3
   health: 3
   guns: []

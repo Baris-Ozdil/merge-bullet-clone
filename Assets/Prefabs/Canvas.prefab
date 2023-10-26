@@ -13,7 +13,6 @@ GameObject:
   - component: {fileID: 8712793389980249960}
   - component: {fileID: 8712793389980249963}
   - component: {fileID: 8712793389980249962}
-  - component: {fileID: 8712793389980249967}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: UI
@@ -120,20 +119,6 @@ MonoBehaviour:
   player: {fileID: 0}
   obje: {fileID: 8712793390334334067}
   obje2: {fileID: 8712793391996439638}
---- !u!114 &8712793389980249967
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8712793389980249973}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0c8cce51ff6eb1e47bf5459e86fedc89, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  BulletCost: 3
-  bullet: {fileID: 9091849187927284371, guid: 2258a61af341e904d82e974ece739b9e, type: 3}
 --- !u!1 &8712793390334334067
 GameObject:
   m_ObjectHideFlags: 0
@@ -255,7 +240,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 8712793389980249967}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: BulletAdd, Assembly-CSharp
         m_MethodName: bulletAdd
         m_Mode: 1

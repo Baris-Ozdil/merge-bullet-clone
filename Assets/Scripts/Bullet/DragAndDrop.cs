@@ -56,7 +56,14 @@ public class DragAndDrop : MonoBehaviour
             canDrop = other.GetComponent<bulletAnchor>().isEmty;
             other.GetComponent<bulletAnchor>().isEmty = false;
             currentAncor = other.gameObject;
-            var mfb = canDrop;
+        }
+    }
+    private void OnTriggerStay(Collider other)
+    {
+        if (other.GetComponent<bulletAnchor>() != null)
+        {           
+            other.GetComponent<bulletAnchor>().isEmty = false;
+            currentAncor = other.gameObject;
         }
     }
 

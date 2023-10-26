@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -14,19 +15,33 @@ public class Bullet : MonoBehaviour
     private GameStarter gameStarter;
     Player player;
     public int damage;
-    private void Start()
+
+    private void Awake()
     {
-        damage = bulletLevel;
+        //duvar sayýsýný ayarlamak için bu þekilde yaptým hasarý
+        //merminin caný kübü ile duvarýn hasarý karesinin 3 katý ile artýyor
+        //bir sütünda 6 mermi olabilceði için total mermi hasarý merminin kübü çarpý 6
+        //duvarlarýn hasarý ile mermi hasarýný eþitlemeliyizki
+        //her halukarda merminin geçmesini engelliyor olabilelim
+        //duvarlarýn hasarý ile merminin total hasarýný eþitlemek için
+        //duvar sayýsý mermi hasarý çarpý 2 olmalý
+        health = bulletLevel * bulletLevel * bulletLevel;
         player = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
-        gameStarter = GameObject.FindGameObjectWithTag("Starter").GetComponent<GameStarter>();
-        if(!player.isGameStart)
+        if (!player.isGameStart)
         {
             SaveSystem.bullets.Add(this);
             //save();
         }
+    }
+    private void Start()
+    {
+        damage = bulletLevel;
+        
+        gameStarter = GameObject.FindGameObjectWithTag("Starter").GetComponent<GameStarter>();
+        
             
 
-        GetComponentInChildren<TextMesh>().text = bulletLevel.ToString();
+        //GetComponentInChildren<TextMesh>().text = bulletLevel.ToString();
 
         if (bulletLevel == 0)
         {
@@ -67,11 +82,29 @@ public class Bullet : MonoBehaviour
         Destroy(gameObject);
 
     }
+    //Save system listinden kaldýrýyor
+    public void RemoveFromSaveSystemList()
+    {
+        SaveSystem.bullets.Remove(this);
+    }
 
-    public void takeDamage(int damage)
+    public void takeDamage(int damage, wall wall)
     {
         health -= damage;
-        if(health <= 0)
+
+        //duvarýn hasarý mermiden çoksa duvara kalan hasarý yeni hasar olarak ayarlanacak
+        if(health < 0)
+        {
+            wall.wallAlive(-health);
             DestroyAndRemoveBullet();
+        }else if(health == 0) 
+        {
+            wall.wallDeath();
+            DestroyAndRemoveBullet();
+        }else if(health> 0)
+        {
+            wall.wallDeath();
+        }
+            
     }
 }

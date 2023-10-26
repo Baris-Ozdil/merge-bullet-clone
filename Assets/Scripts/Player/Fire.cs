@@ -8,6 +8,7 @@ public class Fire : MonoBehaviour
     public GameObject bullet;
     public bool triple = false;
     public bool size = false;
+    private float minFireTime = 0.075f;
 
     bool ancorNull = true;
     bool isnewBulletcome = false;
@@ -31,9 +32,9 @@ public class Fire : MonoBehaviour
 
     public void setFireTime(float time)
     {
-        if (time < 0.033f)
+        if (time < minFireTime)
         {
-            fireTime = 0.033f;
+            fireTime = minFireTime;
         }
         else
         {
@@ -127,6 +128,7 @@ public class Fire : MonoBehaviour
         }
     }
 
+    
     IEnumerator fireWait()
     {
         yield return new WaitForSeconds(fireTime);
@@ -154,23 +156,26 @@ public class Fire : MonoBehaviour
                 return;
             if (bullet == null)
             {
-                var newBullet = Instantiate(other.gameObject, transform, false);
-                newBullet.SetActive(false);
+                //var newBullet = Instantiate(other.gameObject, transform, false);
+                //newBullet.SetActive(false);
                 anchor = player.GetComponent<Player>().GetAnchor();
-                                
-                bullet = newBullet;
+                bullet = other.gameObject;
+                SaveSystem.bullets.Remove(other.GetComponent<Bullet>());
+                other.gameObject.SetActive(false);
+                //bullet = newBullet;
                 
-                other.GetComponent<Bullet>().DestroyAndRemoveBullet();
+                //other.GetComponent<Bullet>().DestroyAndRemoveBullet();
                 transform.SetParent(player.transform, true);
 
-                player.gameObject.GetComponent<Player>().gunCount++;
+                player.gameObject.GetComponent<Player>().gunCountAdd();
                 player.gameObject.GetComponent<Player>().guns.Add(this.gameObject);
 
                 return;
             }
-                
 
-            Destroy(other.gameObject);
+
+            other.GetComponent<Bullet>().DestroyAndRemoveBullet();
+
         }
     }
 

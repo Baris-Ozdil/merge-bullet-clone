@@ -29,6 +29,11 @@ public class UI : MonoBehaviour
     {
         if (GameObject.FindGameObjectWithTag("bullet") == null)
             return;
+
+        //save for check
+        SaveSystem.SaveBullet();
+
+
         var starter = GameObject.FindGameObjectWithTag("Starter").GetComponent<GameStarter>();
         starter.isShouth = true;
         starter.bulletShouthAndFisrstWAllCreate();

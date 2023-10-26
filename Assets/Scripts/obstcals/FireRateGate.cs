@@ -30,8 +30,10 @@ public class FireRateGate : MonoBehaviour
     {
         if (other.gameObject.tag == "bullet")
         {
+            
             Bullet bullet = other.gameObject.GetComponent<Bullet>();
             value += bullet.damage;
+
             Destroy(other.gameObject);
             if (value < 0)
             {

@@ -16,6 +16,8 @@ public class Player : MonoBehaviour
     public List<GameObject> anchors;
     public int highScore = 0;
     int anchorCount = 0;
+    public int buyedBullet = -1;
+    public int buyed100Bullet = 0;
 
     int fireRate = 1;//bunu defult zaman bölerek yapacaz araya sbit bir sayý ekliyip ayarlýcancak
     
@@ -109,13 +111,14 @@ public class Player : MonoBehaviour
             highScore = (int)transform.position.z * 100;
         Data.highscore = highScore;
         SaveSystem.SavePlayerData(this);
+        //Time.timeScale = 0;
         StartCoroutine(DeadTimer());
     }
 
     IEnumerator DeadTimer()
     {
-
-        yield return new WaitForSeconds(0.5f);
+        //To Do buna el at
+        yield return new WaitForSeconds(0.2f);
         SceneManager.LoadScene("EndGame");
         Destroy(gameObject);
     }
@@ -140,7 +143,7 @@ public class Player : MonoBehaviour
     }
 
 
-
+    //if player can buy bullet decrease gold and incrase buyedBullet
     public bool spendGold(int goldNeeded)
     {
         if (gold < goldNeeded)
@@ -148,9 +151,17 @@ public class Player : MonoBehaviour
             return false;
         }
         gold-= goldNeeded;
+        buyedBullet++;
         SaveSystem.SavePlayerData(this);
         UI.GoldReflesh();
         return true;
+    }
+
+    //gunCountu arrtýrýp playerýn coliderýný geniþletiriyorum ki playerýn hitboxý biraz daha düzgün olsun
+    public void gunCountAdd()
+    {
+        gunCount++;
+        gameObject.GetComponent<BoxCollider>().size = new Vector3(gunCount,1,1);
     }
 
 }

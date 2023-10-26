@@ -17,7 +17,7 @@ public class MergeBullet : MonoBehaviour
         Bullet otherBulletScript = other.gameObject.GetComponent<Bullet>();
         if (otherBulletScript == null) return;
 
-        if (otherBulletScript.bulletLevel == bullet.bulletLevel)
+        if (otherBulletScript.bulletLevel == bullet.bulletLevel && bullet.nextLevelBullet != null)
         { 
             canMerge = true;
             otherBullet = other.gameObject;
@@ -46,9 +46,10 @@ public class MergeBullet : MonoBehaviour
             return;
         }
         Instantiate(bullet.nextLevelBullet, otherBullet.transform.position, otherBullet.transform.rotation);
-        anchor.GetComponent<bulletAnchor>().mergeBulleSave();
-
         otherBullet.GetComponent<Bullet>().DestroyAndRemoveBullet();
-        bullet.DestroyAndRemoveBullet();
+        anchor.GetComponent<bulletAnchor>().mergeBulleSave(bullet);
+
+
+        //bullet.DestroyAndRemoveBullet();
     }
 }

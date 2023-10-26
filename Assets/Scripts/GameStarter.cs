@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+//using static UnityEditor.Progress;
 
 public class GameStarter : MonoBehaviour
 {
@@ -29,6 +30,7 @@ public class GameStarter : MonoBehaviour
     {
         playerPref = GameObject.FindGameObjectWithTag("Player");
         player = playerPref.GetComponent<Player>();
+
     }
 
     // Update is called once per frame
@@ -51,7 +53,7 @@ public class GameStarter : MonoBehaviour
         }
 
     }
-
+    //gateleri oluþturuyor
     public void GatesAndEndGameSpawner()
     {
         var gatesNumber = Random.Range(3, 6);
@@ -151,27 +153,45 @@ public class GameStarter : MonoBehaviour
 
 
     //ilk mermiler ateþ edince çalýþacak
+    //duvarlarý oluþturuyor
     public void bulletShouthAndFisrstWAllCreate()
     {
+        Debug.Log("1");
+        //duvar sayýsýný ayarlamak için bu þekilde yaptým hasarý
+        //merminin caný kübü ile duvarýn hasarý karesinin 3 katý ile artýyor
+        //bir sütünda 6 mermi olabilceði için total mermi hasarý merminin kübü çarpý 6
+        //duvarlarýn hasarý ile mermi hasarýný eþitlemeliyizki
+        //her halukarda merminin geçmesini engelliyor olabilelim
+        //duvarlarýn hasarý ile merminin total hasarýný eþitlemek için
+        //duvar sayýsý mermi leveli çarpý 2 olmalý
+        List<Bullet> bullets = SaveSystem.bullets;
+        int currentMaxBulletLevel = bullets.Select(a => a.bulletLevel).Max();
+        var wallNumber = currentMaxBulletLevel * 2;
+        var maxWallLevel = currentMaxBulletLevel ;
+        //
+        //burdan sonrasýna bakýlacak
+        //
+        Debug.Log("2");
+        //oluþturulacak duvarlarýn listi
         columsWithWall = new List<List<GameObject>>();
-        columsWithWall.Add(new List<GameObject>());
-        columsWithWall.Add(new List<GameObject>());
-        columsWithWall.Add(new List<GameObject>());
-        columsWithWall.Add(new List<GameObject>());
-        columsWithWall.Add(new List<GameObject>());
 
-        GameObject[] bullets;
-        bullets = GameObject.FindGameObjectsWithTag("bullet");
-        var bulletObjects = bullets.Select(a => a.GetComponent<Bullet>()).ToList();
+        for (int i = 0; i < 5; i++)
+        {
+            columsWithWall.Add(new List<GameObject>());
+        }
+
+
+        Debug.Log("3");
+        ////bullets = GameObject.FindGameObjectsWithTag("bullet");
+        //var bulletObjects = bullets.Select(a => a.GetComponent<Bullet>()).ToList();
 
         var columnHealth = new int[5];
         var columnMaxLevel = new int[5];
 
-
+        Debug.Log("4");
         for (int i = 0; i < 5; i++)
         {
-            var columnBullets = bulletObjects.Where(a => a.column == i);
-
+            var columnBullets = bullets.Where(a => a.column == i);
             if (columnBullets != null & columnBullets.Any())
             {
                 columnMaxLevel[i] = columnBullets.Max(a => a.bulletLevel);
@@ -179,30 +199,45 @@ public class GameStarter : MonoBehaviour
             }
         }
 
-        var maxLevel = columnMaxLevel.Max();
-        var wallCount = 2 * maxLevel;
+        //var maxLevel = columnMaxLevel.Max();
+        //var wallCount = 2 * maxLevel;
 
+        //geçen kolonlar
         var columCanPass = new List<int>();
-        int minWallsHealt = MinWallsHealth(wallCount);
+        Debug.Log("5");
+        //merminin duvarlarý geçmesi için gerekli olan minimum mermi seviyesi
+        int minPassLevel = 0;
+        if (currentMaxBulletLevel - 3> 0)
+            minPassLevel = currentMaxBulletLevel - 3;
+
         for (int i = 0; i < columnHealth.Length; i++)
         {
-            if (minWallsHealt < columnHealth[i])
+            if (minPassLevel < columnMaxLevel[i] /*& minPassLevel>0*/)
             {
                 columCanPass.Add(i);//geçen colomlar
             }
         }
+        Debug.Log("6");
+        //geçen kolon sayýsý
         int passCount = Random.Range(1, columCanPass.Count + 1);
-        //geçen kolonlarý seç
+        //geçen kolonlarýn listesi
         var columPass = new List<int>();
-
+        //geçen kolonu seçip, geçebilen kolonlardan çýkarýyor
+        Debug.Log("7");
         for (int i = 0; i < passCount; i++)
         {
+            Debug.Log("8");
             var pass = columCanPass[Random.Range(0, columCanPass.Count)];
+            Debug.Log("9");
             columPass.Add(pass);
+            Debug.Log("10");
             columCanPass.Remove(pass);
+            Debug.Log("11");
         }
 
         Debug.Log("pass count " + columPass.Count.ToString());
+
+        
         for (int i = 0; i < 5; i++)
         {
             bool ispass = columPass.Contains(i);
@@ -210,64 +245,157 @@ public class GameStarter : MonoBehaviour
             if (ispass)
             {
 
-                int maxLevelDecreaser = maxLevel;
+                int maxLevelDecreaser = maxWallLevel;
 
-                for (int k = 0; k < wallCount; k++)
+                //bu listedki duvarlar ters çevrilip columsWithWall'a eklenecek
+                List<GameObject> wallist = new List<GameObject>();
+                int addedWallCount = 0;
+                for (int k = 0; k < wallNumber; k++)
                 {
                     var safety = true;
 
                     while (safety)
                     {
-                        var wallId = Random.Range(0, maxLevelDecreaser);
-                        Debug.Log(wallId.ToString());
+                        int wallId = Random.Range(0, maxLevelDecreaser);
+
+                        
 
                         var wall = walls[wallId];
-
-                        int wallDamage = wall.GetComponent<wall>().wallLevel;
-
-                        if (columnHealth[i] - wallDamage > (wallCount - k - 1) * 1 /*buraya "1" yerine duvarýn caný yazýlacak*/)
+                        if(wallId == 0)
                         {
-                            columnHealth[i] -= wallDamage;
-                            columsWithWall[i].Add(wall);
+                            wallist.Add(wall);
+                            addedWallCount++;
+                            Debug.Log("colum " + i + " duvar : " + addedWallCount + "eklendi");
                             safety = false;
                         }
                         else
                         {
-                            maxLevelDecreaser = wall.GetComponent<wall>().wallLevel - 1;
-                        }
-                    }
+                            int wallHealth = wall.GetComponent<wall>().getHealth();
 
+                            //duvarýn caný columdan azsa duvar ekle
+                            if (columnHealth[i] - wallHealth > 0)
+                            {
+                                columnHealth[i] -= wallHealth;
+                                wallist.Add(wall);
+                                addedWallCount++;
+                                Debug.Log("colum " + i + " duvar : " + addedWallCount + "eklendi");
+                                safety = false;
+                            }
+
+                            //hata bu if'te------------------------------------
+                            //duvarýn caný columa eþitse duvar ekleyip random rangi 0 a eþitleyip 0. duvarý seç
+                            else //if (columnHealth[i] - wallHealth <= 0)
+                            {
+                                maxLevelDecreaser = 0;
+                                //wallist.Add(wall);
+                                //addedWallCount++;
+                                //Debug.Log("colum " + i + " duvar : " + addedWallCount + "eklendi");
+                                //safety = false;
+                            }
+                            ////random rangi 0 a eþitleyip 0. duvarý seç
+                            //else
+                            //{
+                            //    maxLevelDecreaser = 0;
+                            //}
+                        }
+
+                        
+
+
+
+                    }
                 }
+                //burda wall listi ters bir þekilde koyuyoruz ki ayný zayýf bloklar sonda birikmesin baþta onlarý geçsin
+                for (int k = wallist.Count -1; k >= 0; k--)
+                {
+                    columsWithWall[i].Add(wallist[k]);
+                }
+
+                Debug.Log("colum " + i + "tamamlandý");
             }
+            //bu colum duvarý geçemedði için duvarýn total caný daha fazla olmalý
             else
             {
                 var safety = true;
-                int min = 0;
-                var tempMaxLevel = walls.Count - 1;
-                for (int k = 0; k < wallCount; k++)
+                var maxWallHealth = walls[maxWallLevel].GetComponent<wall>().getHealth();
+                int minWalllevel = 0;
+                int addedWallCount = 0;
+
+                for (int k = 0; k < wallNumber; k++)
                 {
+                    int maxWallDamage = (wallNumber - (k+1)) * maxWallHealth;
+                    
+                    safety = true;
+                    
                     while (safety)
                     {
-                        var wallId = Random.Range(min, tempMaxLevel);
-                        Debug.Log(wallId.ToString());
+                        int wallId = Random.Range(minWalllevel, maxWallLevel);
+                        var wall = walls[wallId];
 
-                        GameObject wall;
-
-                        wall = walls[wallId];
-
-
-                        int wallDamage = wall.GetComponent<wall>().wallLevel;
-
-                        if (columnHealth[i] - wallDamage <= (wallCount - k - 1) * (min + 1))
+                        if (minWalllevel == maxWallLevel)
                         {
-                            columnHealth[i] -= wallDamage;
                             columsWithWall[i].Add(wall);
-                            break;
+                            addedWallCount++;
+                            Debug.Log("colum " + i + " duvar : " + addedWallCount + "eklendi");
+                            safety = false;
                         }
-                        else if (min < tempMaxLevel)
-                            min++;
+                        else
+                        {
+                            int wallHealth = wall.GetComponent<wall>().getHealth();
+                            //duvarlarýn olabilcek maksimum caný columun canýndan fazlaysa duvarý ekliyor
+                            if ((columnHealth[i] - wallHealth) < maxWallDamage)
+                            {
+                                columnHealth[i] -= wallHealth;
+                                addedWallCount++;
+                                Debug.Log("colum " + i + " duvar : " + addedWallCount + "eklendi");
+                                safety = false;
+                                columsWithWall[i].Add(wall);
+                            }
+                            //duvarlarýn olabilcek maksimum caný columun canýna eþitse duvarý ekliyip daha sonra
+                            //olacak bütün duvarlarý en yüksek seviyeye eþitliyor.
+                            else if ((columnHealth[i] - wallHealth) == maxWallDamage)
+                            {
+                                minWalllevel = maxWallLevel;
+                                addedWallCount++;
+                                Debug.Log("colum " + i + " duvar : " + addedWallCount + "eklendi");
+                                safety = false;
+                                columsWithWall[i].Add(wall);
+                            }
+                            //minimum duvar seviyesini mermiyi durdurcak sevyeye kadar yükseltiyor
+                            else if ((columnHealth[i] - wallHealth) > maxWallDamage)
+                            {
+                                int healthDiff = columnHealth[i] - maxWallDamage;
+                                
+                                //foreach (var item in walls)
+                                //{
+                                  
+                                //    if(item.GetComponent<wall>().health > healthDiff)
+                                //    {
+                                //        minWalllevel = item.GetComponent<wall>().wallLevel;
+                                //        break;
+                                //    }
+                                    
+                                //}
+
+                                for (int z = minWalllevel+1; z < walls.Count; z++)
+                                {
+                                    if (walls[z].GetComponent<wall>().getHealth() > healthDiff)
+                                    {
+                                        minWalllevel = z;
+                                        break;
+                                    }
+                                }
+                            }
+
+                        }
+
                     }
+
                 }
+
+                Debug.Log("colum " + i + "tamamlandý");
+
+
             }
         }
 
@@ -276,8 +404,8 @@ public class GameStarter : MonoBehaviour
         {
             Vector3 pos = bulletAnchor[i].transform.position;
             var zPos = wallCreateZ;
-
-            for (int j = 0; j < wallCount; j++)
+            //burda duvarlarý oluþturup sonraki duvarlarýn oluþmasý için zPos'u ileri kaydýrýyoruz
+            for (int j = 0; j < wallNumber; j++)
             {
                 //int rand = Random.Range(0, wallCount);
                 Instantiate(columsWithWall[i][j], new Vector3(pos.x, pos.y, zPos), Quaternion.identity);
@@ -293,8 +421,9 @@ public class GameStarter : MonoBehaviour
     }
 
 
-    int MinWallsHealth(int wallCount)
+    int MinWallsHealth(int wallCount,int maxBullet)
     {
+
         int minHealth = wallCount * walls[0].GetComponent<wall>().wallLevel;
         return minHealth;
     }

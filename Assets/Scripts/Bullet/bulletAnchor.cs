@@ -35,14 +35,16 @@ public class bulletAnchor : MonoBehaviour
     }
 
 
-    public void mergeBulleSave()
+    public void mergeBulleSave(Bullet bullet)
     {
-        StartCoroutine(WaitEndFrame());
+        bullet.DestroyAndRemoveBullet();
+        SaveSystem.SaveBullet();
+        //StartCoroutine(WaitEndFrame());
     }
 
-    IEnumerator WaitEndFrame()
-    {
-        yield return new WaitForEndOfFrame();
-        SaveSystem.SaveBullet();
-    }
+    //IEnumerator WaitEndFrame()
+    //{
+    //    yield return new WaitForEndOfFrame();
+    //    SaveSystem.SaveBullet();
+    //}
 }
